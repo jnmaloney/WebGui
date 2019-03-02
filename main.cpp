@@ -101,13 +101,9 @@ void input()
 
 void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos)
 {
-
   ImGui::SetCurrentContext(imgui);
   ImGuiIO& io = ImGui::GetIO();
-  //io.WantSetMousePos = true;
-  std::cout << io.MousePos.x << ", " << io.MousePos.y << std::endl;
   io.MousePos = ImVec2((float)xpos*1.f, (float)ypos*1.f);
-  // std::cout << io.MousePos.x << std::endl;
 }
 
 
