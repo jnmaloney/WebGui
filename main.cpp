@@ -20,9 +20,21 @@ ImGuiContext* imgui = 0;
 bool show_demo_window = true;
 bool show_another_window = false;
 
+EM_JS(int, canvas_get_width, (), {
+  return Module.canvas.width;
+});
+
+EM_JS(int, canvas_get_height, (), {
+  return Module.canvas.height;
+});
 
 void draw()
 {
+  int width = canvas_get_width();
+  int height = canvas_get_height();
+
+  glfwSetWindowSize(g_window, width, height);
+
   ImGui::SetCurrentContext(imgui);
 
   ImGui_ImplOpenGL3_NewFrame();
@@ -125,11 +137,13 @@ int init()
       return 1;
   }
 
-  glfwWindowHint(GLFW_SAMPLES, 4); // 4x antialiasing
+  //glfwWindowHint(GLFW_SAMPLES, 4); // 4x antialiasing
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL
 
   // Open a window and create its OpenGL context
-  g_window = glfwCreateWindow( 1280, 720, "The Mayor", NULL, NULL);
+  int canvasWidth = 800;
+  int canvasHeight = 600;
+  g_window = glfwCreateWindow( canvasWidth, canvasHeight, "WebGui Demo", NULL, NULL);
   if( g_window == NULL )
   {
       fprintf( stderr, "Failed to open GLFW window.\n" );
@@ -145,7 +159,6 @@ int init()
   ImGuiIO& io = ImGui::GetIO();
   //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
   //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;   // Enable Gamepad Controls
-  std::cout << "CreateContext()" << std::endl;
 
   ImGui_ImplGlfw_InitForOpenGL(g_window, false);
   ImGui_ImplOpenGL3_Init();
