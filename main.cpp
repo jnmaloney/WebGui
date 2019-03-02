@@ -28,6 +28,10 @@ EM_JS(int, canvas_get_height, (), {
   return Module.canvas.height;
 });
 
+EM_JS(void, resizeCanvas, (), {
+  resizeCanvas();
+});
+
 void draw()
 {
   int width = canvas_get_width();
@@ -178,6 +182,8 @@ int init()
   glfwSetScrollCallback(g_window, ImGui_ImplGlfw_ScrollCallback);
   glfwSetKeyCallback(g_window, ImGui_ImplGlfw_KeyCallback);
   glfwSetCharCallback(g_window, ImGui_ImplGlfw_CharCallback);
+
+  resizeCanvas();
 
   return 0;
 }
