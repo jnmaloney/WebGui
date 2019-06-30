@@ -11,24 +11,14 @@
 #   pacman -S --noconfirm --needed mingw-w64-x86_64-toolchain mingw-w64-x86_64-glfw
 #
 
-#CXX = g++
-#CXX = clang++
-
 CXX = emcc
 OUTPUT = imgui.html
 
 SOURCES = main.cpp
 SOURCES += imgui_impl_glfw.cpp imgui_impl_opengl3.cpp
 SOURCES += imgui.cpp imgui_draw.cpp imgui_demo.cpp
-#SOURCES += ../../imgui.cpp ../../imgui_demo.cpp ../../imgui_draw.cpp
-#SOURCES += ../libs/gl3w/GL/gl3w.c
-
-
-UNAME_S := $(shell uname -s)
-
 
 LIBS = -lGLU -lGL
-
 
 all: $(SOURCES) $(OUTPUT) 
 
