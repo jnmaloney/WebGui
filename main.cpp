@@ -29,7 +29,7 @@ EM_JS(int, canvas_get_height, (), {
 });
 
 EM_JS(void, resizeCanvas, (), {
-  resizeCanvas();
+  js_resizeCanvas();
 });
 
 void loop()
@@ -95,24 +95,6 @@ void loop()
 
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
   glfwMakeContextCurrent(g_window);
-}
-
-
-void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos)
-{
-  ImGui::SetCurrentContext(imgui);
-  ImGuiIO& io = ImGui::GetIO();
-  io.MousePos = ImVec2((float)xpos*1.f, (float)ypos*1.f);
-}
-
-
-void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
-{
-}
-
-
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
-{
 }
 
 

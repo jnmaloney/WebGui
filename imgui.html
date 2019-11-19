@@ -11,13 +11,13 @@
         padding: none;
       }
       .emscripten { padding-right: 0; margin-left: auto; margin-right: auto; display: block; }
-      div.emscripten { text-align: center; }      
+      div.emscripten { text-align: center; }
       div.emscripten_border { border: none; }
       /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
       canvas.emscripten { border: 0px none; background-color: black; }
     </style>
   </head>
-  <body onload="setTimeout(resizeCanvas, 30)">
+  <body>
 
     <div class="emscripten_border">
       <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
@@ -41,12 +41,12 @@
         totalDependencies: 0,
         monitorRunDependencies: function(left) {}
       };
-      window.addEventListener('resize', resizeCanvas, false);
-      function resizeCanvas() {
+      window.addEventListener('resize', js_resizeCanvas, false);
+      function js_resizeCanvas() {
             document.getElementById('canvas').width = window.innerWidth;
             document.getElementById('canvas').height = window.innerHeight;
       }
-      
+
     </script>
     <script async type="text/javascript" src="imgui.js"></script>
   </body>
