@@ -41,6 +41,8 @@ void loop()
 
   ImGui::SetCurrentContext(imgui);
 
+  glfwPollEvents();
+
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
@@ -141,13 +143,7 @@ int init()
   io.Fonts->AddFontFromFileTTF("data/xkcd-script.ttf", 32.0f);
   io.Fonts->AddFontDefault();
 
-  imgui =  ImGui::GetCurrentContext();
-
-  // Cursor callbacks
-  glfwSetMouseButtonCallback(g_window, ImGui_ImplGlfw_MouseButtonCallback);
-  glfwSetScrollCallback(g_window, ImGui_ImplGlfw_ScrollCallback);
-  glfwSetKeyCallback(g_window, ImGui_ImplGlfw_KeyCallback);
-  glfwSetCharCallback(g_window, ImGui_ImplGlfw_CharCallback);
+  imgui = ImGui::GetCurrentContext();
 
   resizeCanvas();
 
