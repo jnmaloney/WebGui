@@ -16,9 +16,10 @@
 
 GLFWwindow* g_window;
 ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-ImGuiContext* imgui = 0;
 bool show_demo_window = true;
 bool show_another_window = false;
+int g_width;
+int g_height;
 
 EM_JS(int, canvas_get_width, (), {
   return Module.canvas.width;
@@ -32,14 +33,24 @@ EM_JS(void, resizeCanvas, (), {
   js_resizeCanvas();
 });
 
+void on_size_changed()
+{
+  glfwSetWindowSize(g_window, g_width, g_height);
+
+  ImGui::SetCurrentContext(ImGui::GetCurrentContext());
+}
+
 void loop()
 {
   int width = canvas_get_width();
   int height = canvas_get_height();
 
-  glfwSetWindowSize(g_window, width, height);
-
-  ImGui::SetCurrentContext(imgui);
+  if (width != g_width || height != g_height)
+  {
+    g_width = width;
+    g_height = height;
+    on_size_changed();
+  }
 
   glfwPollEvents();
 
@@ -100,7 +111,7 @@ void loop()
 }
 
 
-int init()
+int init_gl()
 {
   if( !glfwInit() )
   {
@@ -123,18 +134,22 @@ int init()
   }
   glfwMakeContextCurrent(g_window); // Initialize GLEW
 
-  // Create game objects
+  return 0;
+}
+
+
+int init_imgui()
+{
   // Setup Dear ImGui binding
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
-  ImGuiIO& io = ImGui::GetIO();
-
-  ImGui_ImplGlfw_InitForOpenGL(g_window, false);
+  ImGui_ImplGlfw_InitForOpenGL(g_window, true);
   ImGui_ImplOpenGL3_Init();
 
   // Setup style
   ImGui::StyleColorsDark();
-  //ImGui::StyleColorsClassic();
+
+  ImGuiIO& io = ImGui::GetIO();
 
   // Load Fonts
   io.Fonts->AddFontFromFileTTF("data/xkcd-script.ttf", 23.0f);
@@ -143,10 +158,16 @@ int init()
   io.Fonts->AddFontFromFileTTF("data/xkcd-script.ttf", 32.0f);
   io.Fonts->AddFontDefault();
 
-  imgui = ImGui::GetCurrentContext();
-
   resizeCanvas();
 
+  return 0;
+}
+
+
+int init()
+{
+  init_gl();
+  init_imgui();
   return 0;
 }
 
