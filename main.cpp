@@ -21,14 +21,17 @@ bool show_another_window = false;
 int g_width;
 int g_height;
 
+// Function used by c++ to get the size of the html canvas
 EM_JS(int, canvas_get_width, (), {
   return Module.canvas.width;
 });
 
+// Function used by c++ to get the size of the html canvas
 EM_JS(int, canvas_get_height, (), {
   return Module.canvas.height;
 });
 
+// Function called by javascript
 EM_JS(void, resizeCanvas, (), {
   js_resizeCanvas();
 });
@@ -78,8 +81,6 @@ void loop()
       ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
   }
 
-  //std::cout << "2nd window" << std::endl;
-
   // 2. Show another simple window. In most cases you will use an explicit Begin/End pair to name your windows.
   if (show_another_window)
   {
@@ -119,13 +120,12 @@ int init_gl()
       return 1;
   }
 
-  //glfwWindowHint(GLFW_SAMPLES, 4); // 4x antialiasing
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL
 
   // Open a window and create its OpenGL context
-  int canvasWidth = 800;
-  int canvasHeight = 600;
-  g_window = glfwCreateWindow( canvasWidth, canvasHeight, "WebGui Demo", NULL, NULL);
+  int canvasWidth = g_width;
+  int canvasHeight = g_height;
+  g_window = glfwCreateWindow(canvasWidth, canvasHeight, "WebGui Demo", NULL, NULL);
   if( g_window == NULL )
   {
       fprintf( stderr, "Failed to open GLFW window.\n" );
@@ -180,6 +180,8 @@ void quit()
 
 extern "C" int main(int argc, char** argv)
 {
+  g_width = canvas_get_width();
+  g_height = canvas_get_height();
   if (init() != 0) return 1;
 
   #ifdef __EMSCRIPTEN__
