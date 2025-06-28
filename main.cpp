@@ -13,48 +13,16 @@
 #include "imgui_impl_opengl3.h"
 #include <iostream>
 
-
+// Global variables - the window needs to be passed in to imgui
 GLFWwindow* g_window;
+
+// Global variables - these can be edited in the demo
 ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 bool show_demo_window = true;
 bool show_another_window = false;
-int g_width;
-int g_height;
-
-// Function used by c++ to get the size of the html canvas
-EM_JS(int, canvas_get_width, (), {
-  return Module.canvas.width;
-});
-
-// Function used by c++ to get the size of the html canvas
-EM_JS(int, canvas_get_height, (), {
-  return Module.canvas.height;
-});
-
-// Function called by javascript
-EM_JS(void, resizeCanvas, (), {
-  js_resizeCanvas();
-});
-
-void on_size_changed()
-{
-  glfwSetWindowSize(g_window, g_width, g_height);
-
-  ImGui::SetCurrentContext(ImGui::GetCurrentContext());
-}
 
 void loop()
 {
-  int width = canvas_get_width();
-  int height = canvas_get_height();
-
-  if (width != g_width || height != g_height)
-  {
-    g_width = width;
-    g_height = height;
-    on_size_changed();
-  }
-
   glfwPollEvents();
 
   ImGui_ImplOpenGL3_NewFrame();
@@ -114,21 +82,25 @@ void loop()
 
 int init_gl()
 {
-  if( !glfwInit() )
+  if(!glfwInit())
   {
-      fprintf( stderr, "Failed to initialize GLFW\n" );
+      fprintf(stderr, "Failed to initialize GLFW\n");
       return 1;
   }
 
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+  glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
 
-  // Open a window and create its OpenGL context
-  int canvasWidth = g_width;
-  int canvasHeight = g_height;
-  g_window = glfwCreateWindow(canvasWidth, canvasHeight, "WebGui Demo", NULL, NULL);
-  if( g_window == NULL )
+  // Open a window and create its OpenGL context.
+  // The window is created with minimal size,
+  // which will be updated with an automatic resize. 
+  // You could get the primary viewport size here to create.
+  g_window = glfwCreateWindow(1, 1, "WebGui Demo", NULL, NULL);
+  if (g_window == NULL)
   {
-      fprintf( stderr, "Failed to open GLFW window.\n" );
+      fprintf(stderr, "Failed to open GLFW window.\n");
       glfwTerminate();
       return -1;
   }
@@ -144,21 +116,20 @@ int init_imgui()
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
   ImGui_ImplGlfw_InitForOpenGL(g_window, true);
-  ImGui_ImplOpenGL3_Init();
+  ImGui_ImplGlfw_InstallEmscriptenCallbacks(g_window, "#canvas");
+  ImGui_ImplOpenGL3_Init("#version 300 es");
 
   // Setup style
   ImGui::StyleColorsDark();
 
   ImGuiIO& io = ImGui::GetIO();
 
+  // Disable loading of imgui.ini file
+  io.IniFilename = nullptr;
+
   // Load Fonts
   io.Fonts->AddFontFromFileTTF("data/xkcd-script.ttf", 23.0f);
-  io.Fonts->AddFontFromFileTTF("data/xkcd-script.ttf", 18.0f);
-  io.Fonts->AddFontFromFileTTF("data/xkcd-script.ttf", 26.0f);
-  io.Fonts->AddFontFromFileTTF("data/xkcd-script.ttf", 32.0f);
   io.Fonts->AddFontDefault();
-
-  resizeCanvas();
 
   return 0;
 }
@@ -174,14 +145,17 @@ int init()
 
 void quit()
 {
+  ImGui_ImplOpenGL3_Shutdown();
+  ImGui_ImplGlfw_Shutdown();
+  ImGui::DestroyContext();
+
+  glfwDestroyWindow(g_window);
   glfwTerminate();
 }
 
 
-extern "C" int main(int argc, char** argv)
+int main(int argc, char** argv)
 {
-  g_width = canvas_get_width();
-  g_height = canvas_get_height();
   if (init() != 0) return 1;
 
   #ifdef __EMSCRIPTEN__

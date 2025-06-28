@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"/>
     <title>WebGui Demo</title>
     <style>
       body {
@@ -10,7 +11,25 @@
         margin: 0;
         padding: none;
       }
-      .emscripten { padding-right: 0; margin-left: auto; margin-right: auto; display: block; }
+      .emscripten { 
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            margin: 0px;
+            border: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            display: block;
+            image-rendering: optimizeSpeed;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: -o-crisp-edges;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: optimize-contrast;
+            image-rendering: crisp-edges;
+            image-rendering: pixelated;
+            -ms-interpolation-mode: nearest-neighbor;
+      }
       div.emscripten { text-align: center; }
       div.emscripten_border { border: none; }
       /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
@@ -19,9 +38,7 @@
   </head>
   <body>
 
-    <div class="emscripten_border">
       <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
-    </div>
 
     <script type='text/javascript'>
       var Module = {
@@ -41,12 +58,6 @@
         totalDependencies: 0,
         monitorRunDependencies: function(left) {}
       };
-      window.addEventListener('resize', js_resizeCanvas, false);
-      function js_resizeCanvas() {
-            document.getElementById('canvas').width = window.innerWidth;
-            document.getElementById('canvas').height = window.innerHeight;
-      }
-
     </script>
     <script async type="text/javascript" src="imgui.js"></script>
   </body>
